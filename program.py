@@ -3,13 +3,14 @@
 
 # Call to the libraries
 import re   # Regular Expression
+import sys  # Used by args
 
 att           = []  # Metadata of attributes
 data          = []  # Data of archive
 newitems      = []  # items that have min support
 newdelitems   = []  # New deleted items
 column        = 0   # Amount of columns
-minsupp       = argv[1] # Reiceve this min support how arg
+minsupp       = sys.argv[1] # Reiceve this min support how arg
 
 file = open('weather.nominal.arff', 'r')  # File of study
 
@@ -22,7 +23,7 @@ file.readline() # Jump one line
 # [2] humidity
 # [3] windy
 # [4] play
-def read_metadata():
+def read_metadata(file):
   column  = 0   # Amount of columns
 
   while True:
@@ -88,6 +89,10 @@ def combination(elements, newdelitems, number):
   newlist = []              # List that will be returned
   count   = 0               # Control the first while
 
+  #for teste in elements:
+  #  print teste
+  #  print '\n'
+
   while count < len(elements) - 1:  # Until the penultimate
     sublist1  = elements[count]     # Receive the frist sublist
     sublist2  = elements[count+1]   # Receive the secound firstlist
@@ -97,23 +102,27 @@ def combination(elements, newdelitems, number):
       for word2 in sublist2:  # Iterate all sublist2
         if number == 0:       # If is the first time that use this function
           templist2 = [word1] + [word2] # Save the words how lists and sum
-          templist1.append(list ( set(templist2) ) )  # Appends the new list
+          templist1.append(templist2)   # Appends the new list
         else:
           templist2 = word1 + word2     # Save the words and sum
-          if (is_deleted(currentdel, templist2)):
-            newdelitems.append(templist2)
-            break
-          else:
-            templist1.append(list ( set(templist2) ) )  # Appends the new list
+          #if (is_deleted(currentdel, templist2)):
+          #  newdelitems.append(templist2)
+          #  break
+          #else:
+          templist1.append(list ( set(templist2) ) )  # Appends the new list
                                                     # and remove repeated items
+    # TODO Calculate the support here
     newlist.append(templist1)   # Appends the templist1
     count = count + 1           # Update the value of the count variable
   return newlist                # Returns the list generated
   # Return too newdelitems
 
-column = read_metadata() # Call to the readmetada's function
+column = read_metadata(file) # Call to the readmetada's function
 read_data()              # Call to the read_data's function
 file.close()            # Close the file
 
-#teste = combination(data, newdelitems, 0)
+teste = combination(att, newdelitems, 0)
+temp = calc_support(teste, data, 3)
+print temp
+#teste = combination(teste, newdelitems, 1)
 #print teste[0]
